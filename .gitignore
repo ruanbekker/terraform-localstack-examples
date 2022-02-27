@@ -1,2 +1,5 @@
+apigw-lambda/.terraform*
+apigw-lambda/terraform.tfstate*
 s3-backend/.terraform/*
 s3-backend/.terraform.lock.hcl
+s3-bucket/.terraform*
