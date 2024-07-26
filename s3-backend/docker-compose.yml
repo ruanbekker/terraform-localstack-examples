@@ -3,26 +3,19 @@ version: '3.8'
 services:
   localstack:
     container_name: "localstack"
-    image: localstack/localstack:${LOCALSTACK_VERSION:-0.12.17.5}
+    image: localstack/localstack:${LOCALSTACK_VERSION:-3.6.0}
     environment:
-      - SERVICES=s3,dynamodb
-      - DOCKER_HOST=unix:///var/run/docker.sock
-      - DEFAULT_REGION=eu-west-1
-      - DEBUG=1
-      - DATA_DIR=/tmp/localstack/data
-      - HOST_TMP_FOLDER=/tmp/localstack
+      # LocalStack configuration: https://docs.localstack.cloud/references/configuration/
+      - DEBUG=${DEBUG:-0}
+      - AWS_EC2_METADATA_DISABLED=true
     ports:
-      - "4566:4566"
-      - "4571:4571"
+      - "127.0.0.1:4566:4566"
+      - "127.0.0.1:4510-4559:4510-4559"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-      - localstack-data:/tmp/localstack/data
+      - "${LOCALSTACK_VOLUME_DIR:-./volume}:/var/lib/localstack"
     networks:
       - localstack-network
-
-volumes:
-  localstack-data:
-    name: localstack-data
 
 networks:
   localstack-network:
