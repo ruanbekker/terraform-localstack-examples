@@ -1,5 +1,7 @@
 apigw-lambda/.terraform*
 apigw-lambda/terraform.tfstate*
+elasticsearch/.terraform*
+elasticsearch/terraform.tfstate*
 s3-backend/.terraform*
 s3-backend/terraform.tfstate*
 s3-bucket/.terraform*
