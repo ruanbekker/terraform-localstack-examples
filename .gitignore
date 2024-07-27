@@ -4,6 +4,8 @@ s3-backend/.terraform*
 s3-backend/terraform.tfstate*
 s3-bucket/.terraform*
 s3-bucket/terraform.tfstate*
+secrets-manager/terraform.tfstate*
+secrets-manager/.terraform*
 kinesis-lambda-dynamodb/.terraform*
 kinesis-lambda-dynamodb/terraform.tfstate*
 kinesis-lambda-dynamodb/lambda/order-processor/deployment_package.zip
