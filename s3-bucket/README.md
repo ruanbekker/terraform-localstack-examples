@@ -4,7 +4,9 @@
 Run localstack:
 
 ```
-$ docker-compose up -d
+$ pushd ../
+$ make up
+$ popd
 ```
 
 Deploy Infrastructure

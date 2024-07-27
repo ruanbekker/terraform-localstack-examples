@@ -27,6 +27,9 @@ localstack    | > REPORT RequestId: ead233f7-12f8-15f3-c5c4-061388ed806c        
 Deploy Infra:
 
 ```bash
+$ pushd ../
+$ make up
+$ popd
 $ terraform apply -auto-approveaws_lambda_function.order_processor: Refreshing state... [id=order-processor]
 
 Apply complete! Resources: 1 added, 1 changed, 1 destroyed.

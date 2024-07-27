@@ -6,7 +6,7 @@ Boot localstack:
 
 ```bash
 pushd ../
-docker-compose up -d # or `make up`
+make up
 popd
 ```
 
