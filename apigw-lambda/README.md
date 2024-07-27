@@ -31,6 +31,12 @@ apigw_message_path = "/message"
 message_invoke_url = "http://localhost:4566/restapis/vi0bygtqxi/dev/_user_request_/message"
 ```
 
+We can verify with the aws cli if we have our dynamodb table provisioned:
+
+```bash
+aws --endpoint-url=http://localhost:4566 dynamodb list-tables --region eu-west-1
+```
+
 The basic lambda logic:
 
 ```python
