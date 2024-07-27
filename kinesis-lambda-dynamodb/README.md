@@ -23,7 +23,9 @@ Kinesis, Lambda and DynamoDB Terraform Localstack Example
 Boot localstack:
 
 ```bash
-$ docker-compose up -d
+$ pushd ../
+$ make up
+$ popd
 ```
 
 Create the deployment package for Lambda:

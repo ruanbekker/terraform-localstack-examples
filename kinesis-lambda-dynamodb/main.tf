@@ -1,19 +1,3 @@
-provider "aws" {
-  region                      = "eu-west-1"
-  access_key                  = "localstack"
-  secret_key                  = "localstack"
-  skip_credentials_validation = true
-  skip_metadata_api_check     = true
-  skip_requesting_account_id  = true
-
-  endpoints {
-    dynamodb = "http://localhost:4566"
-    lambda   = "http://localhost:4566"
-    kinesis  = "http://localhost:4566"
-    s3       = "http://localhost:4566"
-  }
-}
-
 data "archive_file" "order_processor_package" {
   type             = "zip"
   source_file      = "${path.module}/lambda/order-processor/src/lambda_function.py"
@@ -44,11 +28,29 @@ resource "aws_kinesis_stream" "orders_processor" {
   ]
 }
 
+data "aws_iam_policy_document" "assume_role" {
+  statement {
+    effect = "Allow"
+
+    principals {
+      type        = "Service"
+      identifiers = ["lambda.amazonaws.com"]
+    }
+
+    actions = ["sts:AssumeRole"]
+  }
+}
+
+resource "aws_iam_role" "iam_for_lambda" {
+  name               = "iam_for_lambda"
+  assume_role_policy = data.aws_iam_policy_document.assume_role.json
+}
+
 resource "aws_lambda_function" "order_processor" {
   function_name    = "order_processor"
   filename         = "${path.module}/lambda/order-processor/deployment_package.zip"
   handler          = "lambda_function.lambda_handler"
-  role             = "fake_role"
+  role             = aws_iam_role.iam_for_lambda.arn
   runtime          = "python3.7"
   timeout          = 60
   memory_size      = 128

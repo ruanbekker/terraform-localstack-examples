@@ -4,6 +4,14 @@ S3 Backend for State and DynamoDB Table for State Locking.
 
 ## Deploy Infra
 
+Run localstack:
+
+```bash
+$ pushd ../
+$ make up
+$ popd
+```
+
 Deploy the S3 Bucket and DynamoDB Table:
 
 ```

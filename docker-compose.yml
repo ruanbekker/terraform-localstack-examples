@@ -1,0 +1,24 @@
+version: '3.8'
+
+services:
+  localstack:
+    container_name: "localstack"
+    image: localstack/localstack:${LOCALSTACK_VERSION:-3.6.0}
+    environment:
+      # LocalStack configuration: https://docs.localstack.cloud/references/configuration/
+      - DEBUG=${DEBUG:-1}
+      - AWS_ACCESS_KEY_ID=localstack
+      - AWS_SECRET_ACCESS_KEY=localstack
+      - AWS_EC2_METADATA_DISABLED=true
+    ports:
+      - "127.0.0.1:4566:4566"
+      - "127.0.0.1:4510-4559:4510-4559"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - "${LOCALSTACK_VOLUME_DIR:-./volume}:/var/lib/localstack"
+    networks:
+      - localstack-network
+
+networks:
+  localstack-network:
+    name: localstack-network

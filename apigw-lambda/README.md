@@ -4,28 +4,37 @@
 
 Boot localstack:
 
-```
-$ docker-compose up -d
+```bash
+pushd ../
+make up
+popd
 ```
 
 ## Usage
 
 Deploy the infrastructure on localstack with terraform:
 
+```bash
+terraform init
+terraform apply -auto-approve
 ```
-$ terraform init
-$ terraform plan
-$ terraform apply
 
-Apply complete! Resources: 13 added, 0 changed, 0 destroyed.
+You should see something like this:
+
+```
+Apply complete! Resources: 23 added, 0 changed, 0 destroyed.
 
 Outputs:
 
-apigw_id = "fwwksnj2b9"
+apigw_id = "vi0bygtqxi"
 apigw_message_path = "/message"
-apigw_root_path = "/{proxy+}"
-message_invoke_url = "http://localhost:4566/restapis/fwwksnj2b9/dev/_user_request_/message"
-root_invoke_url = "http://localhost:4566/restapis/fwwksnj2b9/dev/_user_request_/{proxy+}"
+message_invoke_url = "http://localhost:4566/restapis/vi0bygtqxi/dev/_user_request_/message"
+```
+
+We can verify with the aws cli if we have our dynamodb table provisioned:
+
+```bash
+aws --endpoint-url=http://localhost:4566 dynamodb list-tables --region eu-west-1
 ```
 
 The basic lambda logic:
@@ -44,14 +53,41 @@ def lambda_handler(event, context):
 
 Make a GET request against API GW:
 
-```
-$ curl -XGET http://localhost:4566/restapis/fwwksnj2b9/dev/_user_request_/list
-welcome
+```bash
+curl -H 'Content-Type: application/json' -XGET "http://localhost:4566/restapis/vi0bygtqxi/dev/_user_request_/message"
+[]
 ```
 
 Make a POST request against API GW:
 
+```bash
+curl -H 'Content-Type: application/json' -XPOST "http://localhost:4566/restapis/vi0bygtqxi/dev/_user_request_/message" -d '{"key": "some value"}'
+{"item_id": "8e24a1b6-3bd9-4306-b22a-86dc26f86bb3", "message": "some value"}
 ```
-$ curl -XPOST http://localhost:4566/restapis/fwwksnj2b9/dev/_user_request_/message -d '{"foo": "bar"}'
-{"foo": "bar"}
+
+Make a GET to retrieve information about the item:
+
+```bash
+curl -H 'Content-Type: application/json' -XGET "http://localhost:4566/restapis/vi0bygtqxi/dev/_user_request_/message/8e24a1b6-3bd9-4306-b22a-86dc26f86bb3"
+{"item_id": "8e24a1b6-3bd9-4306-b22a-86dc26f86bb3", "message": "some value"}
+```
+
+Make a PUT request to update the content in DynamoDB:
+
+```bash
+curl -H 'Content-Type: application/json' -XPUT "http://localhost:4566/restapis/vi0bygtqxi/dev/_user_request_/message/8e24a1b6-3bd9-4306-b22a-86dc26f86bb3" -d '{"key": "new value"}'
+{"message": "Item with id 8e24a1b6-3bd9-4306-b22a-86dc26f86bb3 updated to new value"}
+```
+
+Make a DELETE request to remove the item from DynamoDB:
+
+```bash
+curl -H 'Content-Type: application/json' -XDELETE "http://localhost:4566/restapis/vi0bygtqxi/dev/_user_request_/message/8e24a1b6-3bd9-4306-b22a-86dc26f86bb3"
+{"message": "Item with id 8e24a1b6-3bd9-4306-b22a-86dc26f86bb3 deleted"}
+```
+
+To destroy the infrastructure:
+
+```bash
+terraform destroy
 ```
